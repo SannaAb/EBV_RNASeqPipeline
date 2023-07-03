@@ -22,7 +22,7 @@ qsub runTrimGalore.sh Read1.fastq.gz Read2.fastq.gz
 
 ## Alignment
 
-The quality filtered reads are aligned towards the Human (Grch38) and EBV (NC_007605.1) reference genomes using STAR. We are aligning to the two reference genomes seperately to make sure we are not missing possible human-like regions within the viral reference.
+The quality filtered reads are aligned towards the Human (Grch38) and EBV (NC_007605.1) reference genomes using STAR. We are aligning to the two reference genomes seperately to make sure we are not missing possible human-like regions within the viral reference. Afterwards dont forget to create the index for the bamfiles using samtools!
 
 **Modification in script**:
 
@@ -34,8 +34,10 @@ The quality filtered reads are aligned towards the Human (Grch38) and EBV (NC_00
 ```
 
 qsub runStar_Human_ForEBVPipeline_newSTAR.sh sample_R1_trimmed.fastq.gz sample_R2_trimmed.fastq.gz
+qsub runSamtoolsindex.sh sample_NC_007605.1Aligned.sortedByCoord.out.bam
 
 qsub runStar_Virus_ForEBVPipeline_newSTAR.sh sample_R1_trimmed.fastq.gz sample_R2_trimmed.fastq.gz
+qsub runSamtoolsindex.sh sample_Grch38Aligned.sortedByCoord.out.bam
 
 ```
 
@@ -51,8 +53,11 @@ You will need to add Samflags to be able to filter the bamfile, doing this with 
 
 ```
 
-qsub runAddSamflags_Grch38.sh sample.bam
+qsub runAddSamflags_Grch38.sh sample_NC_007605.1Aligned.sortedByCoord.out.bam
+qsub runSamtoolsindex.sh sample_Grch38Aligned.sortedByCoord.out_AddFlags.bam
+
 qsub runAddSamflags_NC_007605.1.sh sample.bam
+qsub runSamtoolsindex.sh sample_NC_007605.1Aligned.sortedByCoord.out_AddFlags.bam
 
 ```
 
@@ -64,14 +69,14 @@ qsub runAddSamflags_NC_007605.1.sh sample.bam
 
 The EBV pipeline filters the alignment files and outputs alignment statistics and counts. Here we filter the alignments to contain max 3 missmatches, an alignment length of more then 40 and multimapping of 10 or less. It runs in python2.
 
-**Modification in script*:*
+**Modification in script**:
 
 Within runEBV_Master_pipeline_KeptEBER.sh
 
 * The EBV Alignmnment
 * The Human Alignment 
 * The filtered Fastq files
-* Important, you also need to change the strand information -S, is the library unstranded (0), stranded (1) or stranded reverse (2)?
+* Important, you also need to change the strand information -S, is the library unstranded (0), stranded (1) or stranded reverse (2)
 
 The bash script points to the python script EBV_Master_pipeline3.py. 
 
@@ -132,7 +137,7 @@ qsub runFeatureCounts_unassignedForEBVRPMS12_StrandedRev.sh sample
 
 ```
 
-*Dependencies*
+**Dependencies**
 
 * samtools/1.9
 * featureCounts/2.0.0
