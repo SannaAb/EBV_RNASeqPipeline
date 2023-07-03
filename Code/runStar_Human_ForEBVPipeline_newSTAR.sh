@@ -2,7 +2,6 @@
 
 #$ -N STAR_Human
 #$ -j y
-#$ -m bea
 #$ -cwd
 #$ -pe mpi 40
 #$ -q development.q

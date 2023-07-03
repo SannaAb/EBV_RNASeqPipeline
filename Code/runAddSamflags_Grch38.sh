@@ -2,7 +2,6 @@
 
 #$ -N Calmd
 #$ -j y
-#$ -m bea
 #$ -cwd
 #$ -pe mpi 1
 #$ -q development.q
