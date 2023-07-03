@@ -2,12 +2,11 @@
 
 Contains the scripts for the EBV master pipeline that runs on *mandalore*.
 
-
 ## Quality filtering 
 
 First we perform the quality filtering.
 
-*How to run*
+**How to run**
 
 ```
 
@@ -15,22 +14,22 @@ qsub runTrimGalore.sh Read1.fastq.gz Read2.fastq.gz
 
 ```
 
-*Dependencies*
+**Dependencies**
 
 * TrimGalore/0.4.0
 * fastqc/0.11.2
+* cutadapt/1.9
 
 ## Alignment
 
-The quality filtered reads are aligned towards the Human (Grch38) and EBV (NC_007605.1) reference genomes using STAR We are aligning to the two reference genomes seperately to make sure we are not missing possible human-like regions within the viral reference.
+The quality filtered reads are aligned towards the Human (Grch38) and EBV (NC_007605.1) reference genomes using STAR. We are aligning to the two reference genomes seperately to make sure we are not missing possible human-like regions within the viral reference.
 
-
-*Modification in script*:
+**Modification in script**:
 
 * Paths to reference genomes
 * Path to STAR executable
 
-*How to run*
+**How to run**
 
 ```
 
@@ -40,14 +39,13 @@ qsub runStar_Virus_ForEBVPipeline_newSTAR.sh sample_R1_trimmed.fastq.gz sample_R
 
 ```
 
-*Dependencies*
+**Dependencies**
 
 * STAR/2.7.2b
 
-
 You will need to add Samflags to be able to filter the bamfile, doing this with samtools.
 
-*Modification in script*:
+**Modification in script**:
 
 * Path to reference genome fasta
 
@@ -58,11 +56,15 @@ qsub runAddSamflags_NC_007605.1.sh sample.bam
 
 ```
 
+**Dependencies**
+
+* samtools/1.9
+
 ## EBV pipeline
 
 The EBV pipeline filters the alignment files and outputs alignment statistics and counts. Here we filter the alignments to contain max 3 missmatches, an alignment length of more then 40 and multimapping of 10 or less. It runs in python2.
 
-*Modification in script*:
+**Modification in script*:*
 
 Within runEBV_Master_pipeline_KeptEBER.sh
 
@@ -81,7 +83,7 @@ Within EBV_Master_pipeline3.py you need to change:
 
 OBS: FeatureCount version is important here! After Version 2.0.0 the tool switched on how to handle the pair information, change the parameters for this if featurecounts is updated! 
 
-*How to run*
+**How to run**
 
 ```
 
@@ -89,7 +91,7 @@ qsub runEBV_Master_pipeline_KeptEBER.sh sample
 
 ```
 
-*Dependencies*
+**Dependencies**
 
 Python2:
 * argparse
@@ -114,17 +116,16 @@ Why? Some reads are lost across the RPMS1 due to the structure of the viral geno
 
 ### For stranded reverse sequencing
 
-*Modification in script*: 
+**Modification in script**:
 
 
 * change path to FirstAnno (NC_007605.1-20210315_NC_changedforstrandedsequencing.tsv)
 * change path to SecondAnno (NC_007605.1-20210304_RPMS1unassigned.tsv)
 * change the path to your featurecounts (subread-2.0.0)
 * Change path to MergeCountsFromTwoFeatureCountsRuns.py Script
-
 * OBS! The script assumes it is a stranded reverse library, change the 2 to 1 if it is just stranded sequencing
 
-*How to run*
+**How to run**
 
 ```
 qsub runFeatureCounts_unassignedForEBVRPMS12_StrandedRev.sh sample
@@ -139,21 +140,21 @@ qsub runFeatureCounts_unassignedForEBVRPMS12_StrandedRev.sh sample
 
 ### For unstranded sequencing
 
-*Modification in script*: 
+**Modification in script**: 
 
 * change path to FirstAnno (NC_007605.1-20210315_NC_changedfornon-strandedsequencing.tsv)
 * change path to SecondAnno (NC_007605.1-20210304_RPMS1unassigned.tsv)
 * change the path to your featurecounts (subread-2.0.0)
 * Change path to MergeCountsFromTwoFeatureCountsRuns.py Script
 
-*How to run*
+**How to run**
 
 ```
 qsub runFeatureCounts_unassignedForEBVRPMS12.sh sample
 
 ```
 
-*Dependencies*
+**Dependencies**
 
 * samtools/1.9
 * featureCounts/2.0.0
@@ -165,25 +166,25 @@ qsub runFeatureCounts_unassignedForEBVRPMS12.sh sample
 
 You can calculate the tpms using the script tpm_rpkm2.R (from Andy Saurin) andrew.saurin@univ-amu.fr
 
-*How to run*
+**How to run**
 
 ```
 Rscript tpm_rpkm2.R sample_HV.count
 
 ```
 
-*Dependencies*
+**Dependencies**
 * R
 
 ## Merge FeatureCounts Table
 
 We can use the following python script to merge the featurecounts tables from the more detailed counting
 
-*Modification in script*:
+**Modification in script**:
 
 * In case you are merging tpm tables remove the astype(int) part in pandas merge
 
-*How to run*
+**How to run**
 
 ```
 
@@ -191,7 +192,7 @@ python MergeFeatureCountTables.py *_HV.count
 
 ```
 
-*Dependencies*
+**Dependencies**
 * python2
 * pandas
 * os
