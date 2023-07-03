@@ -69,6 +69,10 @@ qsub runSamtoolsindex.sh sample_NC_007605.1Aligned.sortedByCoord.out_AddFlags.ba
 
 The EBV pipeline filters the alignment files and outputs alignment statistics and counts. Here we filter the alignments to contain max 3 missmatches, an alignment length of more then 40 and multimapping of 10 or less. It runs in python2.
 
+*Important*
+
+* For first time use you need to unzip the file Homo_sapiens.GRCh38.90.sorted.ProteinCoding.gtf.gz. 
+
 **Modification in script**:
 
 Within runEBV_Master_pipeline_KeptEBER.sh
